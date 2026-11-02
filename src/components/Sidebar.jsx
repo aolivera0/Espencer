@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+import { useAuth } from '../context/auth'
 import {
   IconCard,
   IconClock,
@@ -34,6 +36,28 @@ function Brand() {
 }
 
 export default function Sidebar({ page, onNavigate, open, onClose }) {
+  const { user, signOut } = useAuth()
+
+  useEffect(() => {
+    if (!open) return undefined
+    const onKey = (event) => event.key === 'Escape' && onClose()
+    document.addEventListener('keydown', onKey)
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = previous
+    }
+  }, [open, onClose])
+
+  const name = user.displayName || user.email
+  const initials = name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase()
+
   const content = (
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between px-5 py-6">
@@ -100,12 +124,27 @@ export default function Sidebar({ page, onNavigate, open, onClose }) {
           </p>
         </div>
         <div className="mt-4 flex items-center gap-3 px-1">
-          <div className="grid h-9 w-9 place-items-center rounded-full bg-white/[0.06] text-xs font-semibold text-slate-200">
-            AP
-          </div>
-          <div className="leading-tight">
-            <p className="text-[13px] font-medium text-slate-200">Mi cuenta</p>
-            <p className="text-[11px] text-slate-500">Plan personal</p>
+          {user.photoURL ? (
+            <img
+              src={user.photoURL}
+              alt=""
+              referrerPolicy="no-referrer"
+              className="h-9 w-9 shrink-0 rounded-full bg-white/[0.06] object-cover"
+            />
+          ) : (
+            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/[0.06] text-xs font-semibold text-slate-200">
+              {initials}
+            </div>
+          )}
+          <div className="min-w-0 flex-1 leading-tight">
+            <p className="truncate text-[13px] font-medium text-slate-200">{name}</p>
+            <button
+              type="button"
+              onClick={signOut}
+              className="text-[12px] text-slate-500 transition hover:text-slate-200"
+            >
+              Cerrar sesión
+            </button>
           </div>
         </div>
       </div>
@@ -120,7 +159,7 @@ export default function Sidebar({ page, onNavigate, open, onClose }) {
 
       <div
         className={`fixed inset-0 z-40 lg:hidden ${open ? '' : 'pointer-events-none'}`}
-        aria-hidden={!open}
+        inert={!open}
       >
         <div
           onClick={onClose}

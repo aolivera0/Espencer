@@ -2,17 +2,16 @@ import GastosTable from '../components/GastosTable'
 import MoneyInput from '../components/MoneyInput'
 import StatCard from '../components/StatCard'
 import {
-  IconCaretDown,
   IconPiggy,
   IconPlus,
-  IconReset,
   IconTarget,
   IconTrend,
   IconWallet,
 } from '../components/Icons'
-import { formatMoney, formatPercent, month } from '../data/mock'
+import { formatMoney, formatPercent } from '../data/mock'
 
 export default function Presupuesto({
+  month,
   expenses,
   goals,
   income,
@@ -20,7 +19,6 @@ export default function Presupuesto({
   onUpdate,
   onRemove,
   onAdd,
-  onReset,
   onNavigate,
 }) {
   const totalExpenses = expenses.reduce((sum, item) => sum + Number(item.budget || 0), 0)
@@ -50,30 +48,6 @@ export default function Presupuesto({
           <p className="mt-1 text-[13px] text-slate-500">
             Ajusta tus gastos y mira cómo cambia tu disponible al instante.
           </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <select
-              value={`${month.label} ${month.year}`}
-              onChange={() => {}}
-              className="appearance-none rounded-xl border border-white/[0.08] bg-[#0f1117] py-2.5 pl-3.5 pr-9 text-[13px] font-medium text-slate-200 outline-none transition hover:border-white/[0.14] focus:border-emerald-400/40"
-            >
-              <option>
-                {month.label} {month.year}
-              </option>
-            </select>
-            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">
-              <IconCaretDown className="h-3.5 w-3.5" />
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={onReset}
-            className="inline-flex items-center gap-2 rounded-xl border border-white/[0.08] px-3.5 py-2.5 text-[13px] font-medium text-slate-300 transition hover:border-white/[0.16] hover:text-white"
-          >
-            <IconReset />
-            <span className="hidden sm:inline">Restablecer</span>
-          </button>
         </div>
       </header>
 
