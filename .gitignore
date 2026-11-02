@@ -30,3 +30,6 @@ dist-ssr
 
 # Material de referencia personal
 recursos/
+
+# Caché local de Firebase CLI
+.firebase/
