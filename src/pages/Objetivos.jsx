@@ -4,13 +4,12 @@ import {
   IconCard,
   IconPiggy,
   IconPlus,
-  IconReset,
   IconTarget,
   IconTrend,
 } from '../components/Icons'
-import { formatMoney, formatPercent, month } from '../data/mock'
+import { formatMoney, formatPercent } from '../data/mock'
 
-export default function Objetivos({ goals, onUpdate, onRemove, onAdd, onReset }) {
+export default function Objetivos({ month, goals, onUpdate, onRemove, onAdd }) {
   const totalGoals = goals.reduce((sum, goal) => sum + Number(goal.amount || 0), 0)
   const doneTotal = goals
     .filter((goal) => goal.done)
@@ -37,19 +36,9 @@ export default function Objetivos({ goals, onUpdate, onRemove, onAdd, onReset })
             Define cuánto destinas a ahorro, inversión y deudas, y marca tu avance.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={onReset}
-            className="inline-flex items-center gap-2 rounded-xl border border-white/[0.08] px-3.5 py-2.5 text-[13px] font-medium text-slate-300 transition hover:border-white/[0.16] hover:text-white"
-          >
-            <IconReset />
-            <span className="hidden sm:inline">Restablecer</span>
-          </button>
-        </div>
       </header>
 
-      <section className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+      <section className="grid gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
         <StatCard
           label="Total objetivos"
           value={formatMoney(totalGoals)}

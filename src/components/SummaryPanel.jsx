@@ -1,7 +1,7 @@
-import { formatMoney, formatPercent, month } from '../data/mock'
+import { formatMoney, formatPercent } from '../data/mock'
 import DonutChart from './DonutChart'
 
-export default function SummaryPanel({ income, totalExpenses, totalGoals }) {
+export default function SummaryPanel({ monthLabel, income, totalExpenses, totalGoals }) {
   const free = income - totalExpenses - totalGoals
   const pct = (value) => (income > 0 ? (value / income) * 100 : 0)
 
@@ -21,7 +21,7 @@ export default function SummaryPanel({ income, totalExpenses, totalGoals }) {
       <div className="flex items-center justify-between">
         <h2 className="text-[15px] font-semibold text-white">A dónde va tu ingreso</h2>
         <span className="rounded-md bg-white/[0.04] px-2 py-1 text-[12px] font-medium text-slate-500">
-          {month.label}
+          {monthLabel}
         </span>
       </div>
 

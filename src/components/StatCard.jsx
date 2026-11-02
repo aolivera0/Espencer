@@ -34,21 +34,21 @@ export default function StatCard({
   const t = tones[tone]
   return (
     <div
-      className="animate-rise relative overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0f1117] p-4 sm:p-5"
+      className="animate-rise relative overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0f1117] p-5"
       style={{ animationDelay: `${delay}ms` }}
     >
       <div className="relative flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-[12px] font-medium text-slate-400">{label}</p>
-          <p className="mt-1.5 truncate text-[17px] sm:mt-2 sm:text-[22px] font-semibold tracking-tight text-white">
+          <p className="mt-2 truncate text-[22px] font-semibold tracking-tight text-white">
             {value}
           </p>
         </div>
-        <span className={`hidden h-9 w-9 shrink-0 place-items-center rounded-xl sm:grid ${t.icon}`}>
+        <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl ${t.icon}`}>
           <Icon className="h-[18px] w-[18px]" />
         </span>
       </div>
-      <div className="relative mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5 sm:mt-4">
+      <div className="relative mt-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5">
         <span className="text-[11px] text-slate-500">{hint}</span>
         {percent !== undefined && (
           <span className="text-[11px] font-semibold text-slate-300">{percentLabel}</span>

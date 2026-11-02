@@ -1,4 +1,5 @@
-import { formatMoney } from '../data/mock'
+import { useConfirm } from '../context/confirm'
+import { formatDate, formatMoney } from '../data/mock'
 import { IconTrash } from './Icons'
 import MoneyInput from './MoneyInput'
 import { StatusButton } from './Status'
@@ -9,6 +10,16 @@ const field =
   'w-full rounded-lg border border-transparent bg-transparent px-2 py-2 text-base font-medium text-slate-100 outline-none transition hover:border-white/[0.06] focus:border-emerald-400/40 focus:bg-white/[0.03] md:py-1.5 md:text-[13px]'
 
 export default function DebtTable({ rows, onUpdate, onRemove }) {
+  const confirm = useConfirm()
+
+  const askRemove = async (row) => {
+    const accepted = await confirm({
+      title: '¿Eliminar este abono?',
+      message: `Se eliminará el abono del ${formatDate(row.date)} por ${formatMoney(row.amount)}. También desaparecerá de Objetivos. No se puede deshacer.`,
+    })
+    if (accepted) onRemove(row.id)
+  }
+
   return (
     <div>
       <div
@@ -69,7 +80,7 @@ export default function DebtTable({ rows, onUpdate, onRemove }) {
 
             <button
               type="button"
-              onClick={() => onRemove(row.id)}
+              onClick={() => askRemove(row)}
               className="absolute right-2 top-2 grid h-9 w-9 place-items-center rounded-lg text-slate-500 transition hover:bg-rose-400/10 hover:text-rose-300 focus:opacity-100 md:static md:h-8 md:w-8 md:justify-self-end md:text-slate-600 md:opacity-0 md:group-hover:opacity-100"
               aria-label="Eliminar abono"
             >

@@ -2,6 +2,8 @@ import {
   ArrowUpRight,
   ArrowsClockwise,
   CaretDown,
+  CaretLeft,
+  CaretRight,
   Check,
   Clock,
   CreditCard,
@@ -41,3 +43,5 @@ export const IconMenu = makeIcon(List)
 export const IconClose = makeIcon(X)
 export const IconReset = makeIcon(ArrowsClockwise)
 export const IconCaretDown = makeIcon(CaretDown, 'bold')
+export const IconCaretLeft = makeIcon(CaretLeft, 'bold')
+export const IconCaretRight = makeIcon(CaretRight, 'bold')
