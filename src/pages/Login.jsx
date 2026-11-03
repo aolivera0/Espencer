@@ -1,5 +1,6 @@
 import DonutChart from '../components/DonutChart'
 import { useAuth } from '../context/auth'
+import { readInviteFromUrl } from '../lib/household'
 
 const sample = [
   { name: 'Gastos', value: 49, stroke: 'stroke-rose-400' },
@@ -37,6 +38,12 @@ export default function Login() {
         <p className="mt-3 text-[15px] leading-relaxed text-slate-400">
           Registra tus gastos, objetivos y deudas, y compara cómo te va frente a los meses anteriores.
         </p>
+
+        {readInviteFromUrl() && (
+          <p className="mt-6 rounded-xl border border-emerald-400/20 bg-emerald-400/[0.06] px-3.5 py-2.5 text-[13px] text-emerald-200">
+            Te invitaron a compartir gastos. Inicia sesión para unirte al hogar.
+          </p>
+        )}
 
         <button
           type="button"

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import BottomNav from './components/BottomNav'
 import EmptyMonth from './components/EmptyMonth'
+import JoinInvite from './components/diarios/JoinInvite'
 import { IconMenu } from './components/Icons'
 import MonthSwitcher from './components/MonthSwitcher'
 import Sidebar from './components/Sidebar'
@@ -8,10 +9,12 @@ import { useAuth } from './context/auth'
 import useDebtGoals from './hooks/useDebtGoals'
 import useHistory from './hooks/useHistory'
 import useMonthData from './hooks/useMonthData'
+import { clearInviteFromUrl, readInviteFromUrl } from './lib/household'
 import { copyMonth, seedMonth } from './lib/monthActions'
 import { currentMonthId, describeMonth, shiftMonth } from './lib/months'
 import Dashboard from './pages/Dashboard'
 import Deudas from './pages/Deudas'
+import Diarios from './pages/Diarios'
 import Objetivos from './pages/Objetivos'
 import Presupuesto from './pages/Presupuesto'
 
@@ -20,6 +23,7 @@ export default function Workspace() {
   const [page, setPage] = useState('dashboard')
   const [menuOpen, setMenuOpen] = useState(false)
   const [monthId, setMonthId] = useState(currentMonthId)
+  const [invite, setInvite] = useState(readInviteFromUrl)
 
   const month = useMemo(() => describeMonth(monthId), [monthId])
   const previous = useMemo(() => describeMonth(shiftMonth(monthId, -1)), [monthId])
@@ -36,7 +40,14 @@ export default function Workspace() {
     else data.updateGoal(id, patch)
   }
 
-  const showMonth = page !== 'deudas'
+  const monthPage = ['dashboard', 'presupuesto', 'objetivos'].includes(page)
+  const showSwitcher = !invite && (monthPage || page === 'diarios')
+
+  const finishInvite = (goToHousehold) => {
+    clearInviteFromUrl()
+    setInvite(null)
+    if (goToHousehold) setPage('diarios')
+  }
 
   return (
     <div className="min-h-screen text-slate-200">
@@ -66,7 +77,9 @@ export default function Workspace() {
         </header>
 
         <main className="mx-auto w-full max-w-6xl px-4 pb-24 pt-6 sm:px-6 lg:px-10 lg:py-9">
-          {showMonth && (
+          {invite && <JoinInvite invite={invite} onDone={finishInvite} />}
+
+          {showSwitcher && (
             <div className="mb-5 -ml-2">
               <MonthSwitcher
                 month={month}
@@ -78,13 +91,13 @@ export default function Workspace() {
             </div>
           )}
 
-          {showMonth && data.loading && (
+          {!invite && monthPage && data.loading && (
             <div className="grid h-64 place-items-center" role="status" aria-label="Cargando">
               <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/10 border-t-emerald-400" />
             </div>
           )}
 
-          {showMonth && data.isEmpty && (
+          {!invite && monthPage && data.isEmpty && (
             <EmptyMonth
               month={month}
               previous={previous}
@@ -93,8 +106,8 @@ export default function Workspace() {
             />
           )}
 
-          <div key={`${page}-${monthId}`}>
-            {showMonth && !data.loading && page === 'dashboard' && (
+          <div key={`${page}-${monthId}`} hidden={Boolean(invite)}>
+            {monthPage && !data.loading && page === 'dashboard' && (
               <Dashboard
                 month={month}
                 income={data.income}
@@ -104,7 +117,7 @@ export default function Workspace() {
                 onNavigate={setPage}
               />
             )}
-            {showMonth && !data.loading && page === 'presupuesto' && (
+            {monthPage && !data.loading && page === 'presupuesto' && (
               <Presupuesto
                 month={month}
                 expenses={data.expenses}
@@ -117,7 +130,7 @@ export default function Workspace() {
                 onNavigate={setPage}
               />
             )}
-            {showMonth && !data.loading && page === 'objetivos' && (
+            {monthPage && !data.loading && page === 'objetivos' && (
               <Objetivos
                 month={month}
                 goals={goals}
@@ -127,6 +140,7 @@ export default function Workspace() {
               />
             )}
             {page === 'deudas' && <Deudas />}
+            {page === 'diarios' && <Diarios month={month} />}
           </div>
         </main>
       </div>

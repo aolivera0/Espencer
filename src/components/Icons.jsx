@@ -9,13 +9,17 @@ import {
   CreditCard,
   Gift,
   List,
+  PencilSimple,
   PiggyBank,
   Plus,
   Receipt,
+  ShareNetwork,
+  ShoppingCart,
   SquaresFour,
   Target,
   Trash,
   TrendUp,
+  UsersThree,
   Wallet,
   X,
 } from '@phosphor-icons/react'
@@ -38,6 +42,10 @@ export const IconPiggy = makeIcon(PiggyBank)
 export const IconPlus = makeIcon(Plus, 'bold')
 export const IconCheck = makeIcon(Check, 'bold')
 export const IconTrash = makeIcon(Trash)
+export const IconCart = makeIcon(ShoppingCart)
+export const IconUsers = makeIcon(UsersThree)
+export const IconShare = makeIcon(ShareNetwork)
+export const IconPencil = makeIcon(PencilSimple)
 export const IconArrowUp = makeIcon(ArrowUpRight)
 export const IconMenu = makeIcon(List)
 export const IconClose = makeIcon(X)

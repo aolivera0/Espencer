@@ -1,8 +1,9 @@
-import { IconCard, IconDashboard, IconReceipt, IconTarget } from './Icons'
+import { IconCard, IconCart, IconDashboard, IconReceipt, IconTarget } from './Icons'
 
 const items = [
   { key: 'dashboard', label: 'Resumen', icon: IconDashboard },
   { key: 'presupuesto', label: 'Presupuesto', icon: IconReceipt },
+  { key: 'diarios', label: 'Diarios', icon: IconCart },
   { key: 'objetivos', label: 'Objetivos', icon: IconTarget },
   { key: 'deudas', label: 'Deudas', icon: IconCard },
 ]
@@ -13,7 +14,7 @@ export default function BottomNav({ page, onNavigate }) {
       aria-label="Navegación principal"
       className="fixed inset-x-0 bottom-0 z-30 border-t border-white/[0.06] bg-[#0a0c11]/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden"
     >
-      <ul className="grid grid-cols-4">
+      <ul className="grid grid-cols-5">
         {items.map(({ key, label, icon: Icon }) => {
           const active = page === key
           return (
