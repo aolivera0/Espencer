@@ -2,13 +2,83 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Cada usuario solo puede leer y escribir sus propios datos.
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function householdDoc(hid) {
+      return /databases/$(database)/documents/households/$(hid);
+    }
+
+    function memberDoc(hid, uid) {
+      return /databases/$(database)/documents/households/$(hid)/members/$(uid);
+    }
+
+    function isMember(hid) {
+      return signedIn() && exists(memberDoc(hid, request.auth.uid));
+    }
+
+    function isOwner(hid) {
+      return isMember(hid) && get(householdDoc(hid)).data.createdBy == request.auth.uid;
+    }
+
+    // Una invitación es válida si existe en el hogar y no ha caducado.
+    function validInvite(hid, token) {
+      let path = /databases/$(database)/documents/households/$(hid)/invites/$(token);
+      return token is string && exists(path) && get(path).data.expiresAt > request.time;
+    }
+
+    // Datos personales: cada usuario solo accede a lo suyo.
     match /users/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+      allow read, write: if signedIn() && request.auth.uid == uid;
     }
 
     match /users/{uid}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+
+    // Hogares compartidos: solo sus miembros leen y escriben.
+    match /households/{hid} {
+      allow get: if isMember(hid);
+      // Quien crea el hogar debe quedar como miembro en la misma escritura.
+      allow create: if signedIn()
+        && request.resource.data.createdBy == request.auth.uid
+        && existsAfter(memberDoc(hid, request.auth.uid));
+      allow update: if isMember(hid)
+        && request.resource.data.createdBy == resource.data.createdBy;
+
+      match /members/{uid} {
+        allow read: if isMember(hid);
+        allow create: if signedIn() && request.auth.uid == uid && (
+          (request.resource.data.role == 'owner'
+            && getAfter(householdDoc(hid)).data.createdBy == uid)
+          || (request.resource.data.role == 'member'
+            && validInvite(hid, request.resource.data.get('invite', '')))
+        );
+        // Cada quien solo cambia su apodo y su foto.
+        allow update: if signedIn() && request.auth.uid == uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nickname', 'photoURL']);
+        // Salir del hogar, o el creador saca a alguien.
+        allow delete: if signedIn() && (request.auth.uid == uid || isOwner(hid));
+      }
+
+      match /invites/{token} {
+        // Quien conoce el enlace puede leer esa invitación (para ver a qué hogar entra).
+        allow get: if signedIn();
+        allow list, delete: if isMember(hid);
+        allow create: if isMember(hid)
+          && request.resource.data.createdBy == request.auth.uid
+          && request.resource.data.expiresAt is timestamp
+          && request.resource.data.expiresAt <= request.time + duration.value(8, 'd');
+      }
+
+      match /expenses/{id} {
+        allow read, write: if isMember(hid);
+      }
+
+      match /settlements/{id} {
+        allow read, write: if isMember(hid);
+      }
     }
 
     // Todo lo demás queda denegado.

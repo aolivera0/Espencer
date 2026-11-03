@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useAuth } from '../context/auth'
 import {
+  IconCart,
   IconCard,
   IconClock,
   IconClose,
@@ -13,6 +14,7 @@ import {
 const navItems = [
   { key: 'dashboard', label: 'Dashboard', icon: IconDashboard, enabled: true },
   { key: 'presupuesto', label: 'Presupuesto', icon: IconReceipt, enabled: true },
+  { key: 'diarios', label: 'Gastos diarios', icon: IconCart, enabled: true },
   { key: 'objetivos', label: 'Objetivos', icon: IconTarget, enabled: true },
   { key: 'deudas', label: 'Deudas', icon: IconCard, enabled: true },
   { key: 'pendientes', label: 'Pendientes', icon: IconClock, enabled: false },
